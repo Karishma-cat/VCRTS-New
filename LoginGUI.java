@@ -23,7 +23,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
-public class LoginGUI extends JFrame {
+public class LoginGUI extends JFrame 
+{
     private JCheckBox ownerCheckBox;
     private ArrayList<RegisterAccountClick> userList = new ArrayList<>();
 
@@ -37,7 +38,8 @@ public class LoginGUI extends JFrame {
         setVisible(true);
     }
 
-    private void initializeLoginGUI() {
+    private void initializeLoginGUI() 
+    {
         setTitle("Welcome to the Vehicle Cloud Real Time System Login Page!");
         setSize(600, 450);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -67,10 +69,11 @@ public class LoginGUI extends JFrame {
         mainPanel.add(imageLabel, BorderLayout.SOUTH);
 
         registerButton.addActionListener(e -> RegisterAccountClick());
-            loginButton.addActionListener(e -> LoginAccountClick());
+        loginButton.addActionListener(e -> LoginAccountClick());
     }
 
-   private void RegisterAccountClick() {
+   private void RegisterAccountClick() 
+   {
     JFrame registerButtonFrame = new JFrame("Register an account");
     registerButtonFrame.setSize(300, 350);
 
@@ -113,9 +116,12 @@ public class LoginGUI extends JFrame {
         int ownerId = Integer.parseInt(ownerIdString);
         boolean isOwner = ownerCheckBox.isSelected();
 
-        if (checkForId(ownerId)) {
+        if (checkForId(ownerId)) 
+        {
             JOptionPane.showMessageDialog(null, "ID number already in use, please select another");
-        } else {
+        } 
+        else 
+        {
             RegisterAccountClick userRegistered = new RegisterAccountClick(ownerId, userName);
 
             JOptionPane.showMessageDialog(null, "You have been registered");
@@ -194,29 +200,35 @@ JFrame LoginAccountFrame = new JFrame("Login");
     }
 
 
-    private boolean checkForId(int ownerId) {
+    private boolean checkForId(int ownerId) 
+    {
         // Replace this 
         return false;
     }
 
-    private void writeToFile(String data, String filename) {
-       // Replace this 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) {
+    private static boolean writeToFile(String data, String fileName) 
+    {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) 
+        {
             writer.write(data);
             writer.newLine();
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
-    private JLabel createStyledLabel(String text) {
+    private JLabel createStyledLabel(String text) 
+    {
         JLabel label = new JLabel(text);
         label.setFont(new Font("Arial", Font.BOLD, 12));
         label.setForeground(new Color(128, 0, 32));
         return label;
     }
 
-    private JButton createStyledButton(String text) {
+    private JButton createStyledButton(String text) 
+    {
         JButton button = new JButton(text);
         button.setPreferredSize(new Dimension(200, 40));
         button.setFont(new Font("Arial", Font.BOLD, 14));
@@ -231,11 +243,13 @@ JFrame LoginAccountFrame = new JFrame("Login");
     }
 }
 
-class RegisterAccountClick {
+class RegisterAccountClick 
+{
     private int ownerId;
     private String userName;
 
-    public RegisterAccountClick(int ownerId, String userName) {
+    public RegisterAccountClick(int ownerId, String userName) 
+    {
         this.ownerId = ownerId;
         this.userName = userName;
     }
