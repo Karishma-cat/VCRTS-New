@@ -1,3 +1,3 @@
-public class ClientGUI {
+public class ClientGUI extends LoginGUI {
     
 }

@@ -3,7 +3,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,7 +31,8 @@ public class LoginGUI extends JFrame {
         new LoginGUI();
     }
 
-    public LoginGUI() {
+    public LoginGUI() 
+    {
         initializeLoginGUI();
         setVisible(true);
     }
@@ -62,6 +67,7 @@ public class LoginGUI extends JFrame {
         mainPanel.add(imageLabel, BorderLayout.SOUTH);
 
         registerButton.addActionListener(e -> RegisterAccountClick());
+            loginButton.addActionListener(e -> LoginAccountClick());
     }
 
    private void RegisterAccountClick() {
@@ -124,6 +130,68 @@ public class LoginGUI extends JFrame {
         }
     });
 }
+private void LoginAccountClick()
+{
+JFrame LoginAccountFrame = new JFrame("Login");
+        LoginAccountFrame.setSize(300, 350);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout(10, 10));
+        LoginAccountFrame.add(panel);
+
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
+
+        JLabel LoginNameLabel = createStyledLabel("Please enter your full name:");
+        JTextField LoginNameText = new JTextField();
+        JLabel userIDLabel = createStyledLabel("Please enter an ID (numbers only):");
+        JTextField userIDText = new JTextField();
+
+        inputPanel.add(LoginNameLabel);
+        inputPanel.add(LoginNameText);
+        inputPanel.add(userIDLabel);
+        inputPanel.add(userIDText);
+
+        JButton LoginToGUI = createStyledButton("Click To Login");
+
+        LoginToGUI.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String fullName = LoginNameText.getText();
+                String userID = userIDText.getText();
+
+                boolean isOwner = checkIfOwner(fullName, userID);
+
+                if (isOwner) {
+                    OwnerGUI();
+                } else {
+                    ClientGUI();
+                }
+            }
+
+        });
+
+        panel.add(inputPanel, BorderLayout.CENTER);
+        panel.add(LoginToGUI, BorderLayout.SOUTH);
+
+        LoginAccountFrame.setVisible(true);
+    }
+
+    private boolean checkIfOwner(String fullName, String userID) {
+        try (BufferedReader br = new BufferedReader(new FileReader("actionlog.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+
+                String[] parts = line.split(" ");
+                if (fullName.equals(parts[0]) && userID.equals(parts[1]) && "Owner".equals(parts[2])) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle the exception appropriately
+        }
+        return false;
+    }
 
 
     private boolean checkForId(int ownerId) {
@@ -171,6 +239,4 @@ class RegisterAccountClick {
         this.ownerId = ownerId;
         this.userName = userName;
     }
-
-    // Getter and setter methods (if needed)
 }

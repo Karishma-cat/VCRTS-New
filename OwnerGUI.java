@@ -1,3 +1,3 @@
-public class OwnerGUI {
+public class OwnerGUI extends LoginGUI{
     
 }
