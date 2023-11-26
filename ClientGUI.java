@@ -28,43 +28,47 @@ public class ClientGUI extends LoginGUI {
         clientSubmitJob.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new ClientSubmitJobClick();
+                new ClientGUI().ClientSubmitJobClick(); 
             }
         });
+        
 
         clientGUILogin.setLayout(null); 
         clientGUILogin.setVisible(true);
     }
 
-    public void ClientSubmitJobClick()
-    {
+    public void ClientSubmitJobClick() {
         JFrame ClientJobFrame = new JFrame("Job Submission");
-        ClientJobFrame.setSize(300, 450);
-
+        ClientJobFrame.setSize(400, 250);
+    
         JLabel jobTitle = createStyledLabel("What is the name of the task?");
-        jobTitle.setBounds(10, 90, 400, 30);
+        jobTitle.setBounds(20, 20, 250, 30);
         ClientJobFrame.add(jobTitle);
-
+    
         JTextField jobTitleTextField = new JTextField("");
-        jobTitleTextField.setBounds(20, 90, 200, 30);
+        jobTitleTextField.setBounds(20, 50, 250, 30);
         ClientJobFrame.add(jobTitleTextField);
-
+    
         JLabel jobDuration = createStyledLabel("Approximate duration of task (in minutes):");
-        jobDuration.setBounds(20, 90, 400, 30);
+        jobDuration.setBounds(20, 90, 250, 30);
         ClientJobFrame.add(jobDuration);
-
+    
         JTextField jobDurationTextField = new JTextField("");
-        jobDurationTextField.setBounds(20, 120, 200, 30);
+        jobDurationTextField.setBounds(20, 120, 250, 30);
         ClientJobFrame.add(jobDurationTextField);
-
+    
         JLabel jobDeadline = createStyledLabel("Job Deadline: (mm/dd/yyyy)");
-        jobDeadline.setBounds(20, 150, 200, 30);
+        jobDeadline.setBounds(20, 160, 250, 30);
         ClientJobFrame.add(jobDeadline);
-
+    
+        JTextField jobDeadlineTextField = new JTextField("");
+        jobDeadlineTextField.setBounds(20, 190, 250, 30);
+        ClientJobFrame.add(jobDeadlineTextField);
+    
         ClientJobFrame.setLayout(null);
         ClientJobFrame.setVisible(true);
-
     }
+    
 
     public static JButton createStyledButton(String text) {
         JButton button = new JButton(text);

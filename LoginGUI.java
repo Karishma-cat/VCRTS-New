@@ -169,9 +169,10 @@ JFrame LoginAccountFrame = new JFrame("Login");
                 boolean isOwner = checkIfOwner(fullName, userID);
 
                 if (isOwner) {
-                    OwnerGUI();
+                  //  OwnerGUI();
                 } else {
-                    ClientGUI();
+                    ClientGUI clientGUI = new ClientGUI();
+    clientGUI.createClientGUI();
                 }
             }
 
