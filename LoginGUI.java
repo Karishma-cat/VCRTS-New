@@ -10,6 +10,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
@@ -25,6 +26,7 @@ import javax.swing.border.LineBorder;
 
 public class LoginGUI extends JFrame 
 {
+    private Socket serverSocket;
     private JCheckBox ownerCheckBox;
     private ArrayList<RegisterAccountClick> userList = new ArrayList<>();
 
@@ -170,11 +172,10 @@ JFrame LoginAccountFrame = new JFrame("Login");
 
                 if (isOwner) {
                     OwnerGUI ownerGUI = new OwnerGUI();
-                    ownerGUI.createOwnerGUI();
-                    ownerGUI.setVisible(true);
+                    ownerGUI.createOwnerGUI(serverSocket);
                 } else {
                     ClientGUI clientGUI = new ClientGUI();
-    clientGUI.createClientGUI();
+                    clientGUI.createClientGUI();
                 }
             }
 
@@ -185,29 +186,23 @@ JFrame LoginAccountFrame = new JFrame("Login");
 
         LoginAccountFrame.setVisible(true);
     }
-
     private boolean checkIfOwner(String fullName, String userID) {
         try (BufferedReader br = new BufferedReader(new FileReader("actionlog.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
-
-                String[] parts = line.split(" ");
-                if (fullName.equals(parts[0]) && userID.equals(parts[1]) && "Owner".equals(parts[2])) {
+                String[] parts = line.split("\\s+"); 
+                if (parts.length >= 3 && fullName.equals(parts[0]) && userID.equals(parts[2])) {
                     return true;
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace(); // Handle the exception appropriately
+            e.printStackTrace(); 
         }
         return false;
     }
+    
 
 
-    private boolean checkForId(int ownerId) 
-    {
-        // Replace this 
-        return false;
-    }
 
     private static boolean writeToFile(String data, String fileName) 
     {

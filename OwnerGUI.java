@@ -3,9 +3,11 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.Socket;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,31 +16,31 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
 public class OwnerGUI extends LoginGUI {
+    private Socket serverSocket; 
 
-    public void createOwnerGUI() {
+    public void createOwnerGUI(Socket serverSocket) {
         JFrame ownerGUILogin = new JFrame("Owner Panel");
         ownerGUILogin.setSize(300, 450);
         ownerGUILogin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JLabel ownerGUIWelcome = createStyledLabel("Please enter owner information");
-        ownerGUIWelcome.setBounds(20, 20, 250, 30);
+        ownerGUIWelcome.setBounds(20, 20, 350, 30);
         ownerGUILogin.add(ownerGUIWelcome);
 
-        // Create text fields for user input
         JTextField ownerIDTextField = createStyledTextField("Owner ID:");
-        ownerIDTextField.setBounds(20, 70, 250, 30);
+        ownerIDTextField.setBounds(20, 70, 350, 30);
         ownerGUILogin.add(ownerIDTextField);
 
         JTextField vehicleInfoTextField = createStyledTextField("Vehicle Information:");
-        vehicleInfoTextField.setBounds(20, 110, 250, 30);
+        vehicleInfoTextField.setBounds(20, 110, 350, 30);
         ownerGUILogin.add(vehicleInfoTextField);
 
         JTextField residencyTimeTextField = createStyledTextField("Residency Time:");
-        residencyTimeTextField.setBounds(20, 150, 250, 30);
+        residencyTimeTextField.setBounds(20, 150, 350, 30);
         ownerGUILogin.add(residencyTimeTextField);
 
         JButton submitButton = createStyledButton("Submit");
-        submitButton.setBounds(20, 190, 250, 40);
+        submitButton.setBounds(20, 190, 350, 40);
         ownerGUILogin.add(submitButton);
 
         submitButton.addActionListener(new ActionListener() {
@@ -47,29 +49,43 @@ public class OwnerGUI extends LoginGUI {
                 String ownerID = ownerIDTextField.getText();
                 String vehicleInfo = vehicleInfoTextField.getText();
                 String residencyTime = residencyTimeTextField.getText();
+    
+                writeToFile(ownerID, vehicleInfo);
 
-                
-                saveToActionLog(ownerID, vehicleInfo, residencyTime);
-
-                
+                sendDataToServer(ownerID, vehicleInfo, residencyTime);
             }
         });
-
+    
         ownerGUILogin.setLayout(null);
         ownerGUILogin.setVisible(true);
     }
 
-    private void saveToActionLog(String ownerID, String vehicleInfo, String residencyTime) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("actionlog.txt", true))) {
-            writer.write("Owner ID: " + ownerID + "\n");
-            writer.write("Vehicle Information: " + vehicleInfo + "\n");
-            writer.write("Residency Time: " + residencyTime + "\n");
-            writer.write("------------------------\n");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            // Handle the exception as needed
+
+    private void sendDataToServer(String ownerID, String vehicleInfo, String residencyTime) {
+        try (Socket socket = new Socket("localhost", 12345);
+             PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))
+        ) {
+
+            String data = ownerID + "," + vehicleInfo + "," + residencyTime;
+            writer.println(data);
+
+            String response = reader.readLine();
+            System.out.println("Received response from server: " + response);
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+
+    public static void main(String[] args) {
+        try (Socket serverSocket = new Socket("localhost", 12345)) {
+            new OwnerGUI().createOwnerGUI(serverSocket);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private static JTextField createStyledTextField(String labelText) {
         JTextField textField = new JTextField("");
@@ -104,5 +120,17 @@ public class OwnerGUI extends LoginGUI {
         label.setFont(new Font("Arial", Font.BOLD, 12));
         label.setForeground(new Color(128, 0, 32));
         return label;
+    }
+    private static boolean writeToFile(String data, String fileName) 
+    {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) 
+        {
+            writer.write(data);
+            writer.newLine();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
