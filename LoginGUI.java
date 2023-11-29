@@ -201,12 +201,10 @@ JFrame LoginAccountFrame = new JFrame("Login");
         try {
             SwingUtilities.invokeLater(() -> {
                 try {
-                    // Register the MySQL JDBC driver
                     Class.forName("com.mysql.cj.jdbc.Driver");
 
-                    // Establish the database connection
                     try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-                        // Your existing code for inserting data
+
                         String query = "INSERT INTO user_table (user_id, full_name, is_owner) VALUES (?, ?, ?)";
                         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                             preparedStatement.setInt(1, ownerId);
