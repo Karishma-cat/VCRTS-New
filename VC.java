@@ -18,7 +18,7 @@ public class VC {
         try {
             serverSocket = new ServerSocket(port);
             acceptingRequests = true;
-            databaseConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/SoftwareEng", "x", "x");
+            databaseConnection = DriverManager.getConnection("/Users/tiffanyhale/Documents/CodingProjectsFall2023/SoftwareEngineering/VCRTS-New/mysql-connector-j-8.2.0.jar", "localhost", "Database@1*");
             System.out.println("VC Controller is running and waiting for connections on port " + port);
 
             new Thread(this::acceptClientConnections).start();
@@ -75,7 +75,7 @@ public class VC {
             String vehicleInfo = parts[1];
             String residencyTime = parts[2];
 
-            String insertQuery = "INSERT INTO job_submissions (owner_id, vehicle_info, residency_time, status) VALUES (?, ?, ?, 'Accepted')";
+            String insertQuery = "INSERT INTO jobSubmissions (owner_id, vehicle_info, residency_time, status) VALUES (?, ?, ?, 'Accepted')";
             try (PreparedStatement preparedStatement = databaseConnection.prepareStatement(insertQuery)) {
                 preparedStatement.setString(1, ownerID);
                 preparedStatement.setString(2, vehicleInfo);
