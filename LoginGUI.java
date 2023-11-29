@@ -6,11 +6,13 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
@@ -29,6 +31,9 @@ public class LoginGUI extends JFrame
     private Socket serverSocket;
     private JCheckBox ownerCheckBox;
     private ArrayList<RegisterAccountClick> userList = new ArrayList<>();
+    private static final String DB_URL = "/Users/tiffanyhale/Documents/CodingProjectsFall2023/SoftwareEngineering/VCRTS-New/mysql-connector-j-8.2.0.jar";
+    private static final String DB_USER = "localhost";
+    private static final String DB_PASSWORD = "Database@1*";
 
     public static void main(String[] args) {
         new LoginGUI();
@@ -117,24 +122,13 @@ public class LoginGUI extends JFrame
 
         int ownerId = Integer.parseInt(ownerIdString);
         boolean isOwner = ownerCheckBox.isSelected();
-        
-       // if (checkIfOwner(ownerId)) 
-        {
-            JOptionPane.showMessageDialog(null, "ID number already in use, please select another");
-        } 
-       // else 
-        {
-            RegisterAccountClick userRegistered = new RegisterAccountClick(ownerId, userName);
 
+        if (insertUserIntoDatabase(ownerId, userName, isOwner)) {
             JOptionPane.showMessageDialog(null, "You have been registered");
-
-            String userData = "User " + userName + "\n" + "ID: " + ownerId + "\nOwner or client: "
-                + (isOwner ? "Owner" : "Client") + "\n";
-            String filename = "actionlog.txt";
-            writeToFile(userData, filename);
-            userList.add(userRegistered);
-
+            userList.add(new RegisterAccountClick(ownerId, userName));
             registerButtonFrame.dispose();
+        } else {
+            JOptionPane.showMessageDialog(null, "Failed to register. Please try again.");
         }
     });
 }
@@ -201,21 +195,50 @@ JFrame LoginAccountFrame = new JFrame("Login");
         return false;
     }
     
+    // TRIED WORKING ON WRITING LOGIN TO THE TABLE. KEEPS CRASHING ME.
+    private boolean insertUserIntoDatabase(int ownerId, String userName, boolean isOwner) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+    
+        try {
 
+            Class.forName("com.mysql.cj.jdbc.Driver");
+    
 
+            String url = "jdbc:mysql://localhost:3306/vc3";
+            String user = "localhost";
+            String password = "Database@1*";
+            connection = DriverManager.getConnection(url, user, password);
+    
 
-    private static boolean writeToFile(String data, String fileName) 
-    {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) 
-        {
-            writer.write(data);
-            writer.newLine();
-            return true;
-        } catch (IOException e) {
+            String query = "INSERT INTO user_table (user_id, full_name, is_owner) VALUES (?, ?, ?)";
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, ownerId);
+            preparedStatement.setString(2, userName);
+            preparedStatement.setBoolean(3, isOwner);
+    
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+    
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
             return false;
+        } finally {
+
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
+    
+    
 
     private JLabel createStyledLabel(String text) 
     {
