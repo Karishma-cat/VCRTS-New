@@ -23,7 +23,7 @@ public class OwnerGUI extends LoginGUI {
 
     public void createOwnerGUI(Socket serverSocket) {
         JFrame ownerGUILogin = new JFrame("Owner Panel");
-        ownerGUILogin.setSize(400, 500); // Adjusted size for the new input
+        ownerGUILogin.setSize(400, 500); 
         ownerGUILogin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JLabel ownerGUIWelcome = createStyledLabel("Please enter owner information");
