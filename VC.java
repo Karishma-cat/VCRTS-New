@@ -18,7 +18,7 @@ public class VC {
         try {
             serverSocket = new ServerSocket(port);
             acceptingRequests = true;
-            databaseConnection = DriverManager.getConnection("/Users/tiffanyhale/Documents/CodingProjectsFall2023/SoftwareEngineering/VCRTS-New/mysql-connector-j-8.2.0.jar", "localhost", "Database@1*");
+            databaseConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/VC3?useTimezone=true&serverTimezone=UTC\" ;", "localhost", "Database@1*");
             System.out.println("VC Controller is running and waiting for connections on port " + port);
 
             new Thread(this::acceptClientConnections).start();

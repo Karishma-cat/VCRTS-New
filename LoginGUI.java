@@ -24,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 
 public class LoginGUI extends JFrame 
@@ -31,7 +32,7 @@ public class LoginGUI extends JFrame
     private Socket serverSocket;
     private JCheckBox ownerCheckBox;
     private ArrayList<RegisterAccountClick> userList = new ArrayList<>();
-    private static final String DB_URL = "/Users/tiffanyhale/Documents/CodingProjectsFall2023/SoftwareEngineering/VCRTS-New/mysql-connector-j-8.2.0.jar";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/vc3";
     private static final String DB_USER = "localhost";
     private static final String DB_PASSWORD = "Database@1*";
 
@@ -197,46 +198,42 @@ JFrame LoginAccountFrame = new JFrame("Login");
     
     // TRIED WORKING ON WRITING LOGIN TO THE TABLE. KEEPS CRASHING ME.
     private boolean insertUserIntoDatabase(int ownerId, String userName, boolean isOwner) {
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-    
         try {
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    // Register the MySQL JDBC driver
+                    Class.forName("com.mysql.cj.jdbc.Driver");
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-    
+                    // Establish the database connection
+                    try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+                        // Your existing code for inserting data
+                        String query = "INSERT INTO user_table (user_id, full_name, is_owner) VALUES (?, ?, ?)";
+                        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                            preparedStatement.setInt(1, ownerId);
+                            preparedStatement.setString(2, userName);
+                            preparedStatement.setBoolean(3, isOwner);
 
-            String url = "jdbc:mysql://localhost:3306/vc3";
-            String user = "localhost";
-            String password = "Database@1*";
-            connection = DriverManager.getConnection(url, user, password);
-    
+                            int rowsAffected = preparedStatement.executeUpdate();
+                            if (rowsAffected > 0) {
+                                System.out.println("User inserted successfully.");
+                            } else {
+                                System.out.println("User insertion failed.");
+                            }
+                        }
+                    }
+                } catch (ClassNotFoundException | SQLException e) {
+                    e.printStackTrace();
+                }
+            });
 
-            String query = "INSERT INTO user_table (user_id, full_name, is_owner) VALUES (?, ?, ?)";
-            preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, ownerId);
-            preparedStatement.setString(2, userName);
-            preparedStatement.setBoolean(3, isOwner);
-    
-            int rowsAffected = preparedStatement.executeUpdate();
-            return rowsAffected > 0;
-    
-        } catch (ClassNotFoundException | SQLException e) {
+            return true;
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
-        } finally {
-
-            try {
-                if (preparedStatement != null) {
-                    preparedStatement.close();
-                }
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
     }
+
+
     
     
 
