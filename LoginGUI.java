@@ -6,10 +6,13 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
@@ -21,15 +24,20 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 
 public class LoginGUI extends JFrame 
 {
+    private Socket serverSocket;
     private JCheckBox ownerCheckBox;
     private ArrayList<RegisterAccountClick> userList = new ArrayList<>();
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/VC3";
+    private static final String DB_USER = "localhost";
+    private static final String DB_PASSWORD = "Aniraam9835";
 
     public static void main(String[] args) {
-        new Logingui();
+        new LoginGUI();
     }
 
     public LoginGUI() 
@@ -116,23 +124,12 @@ public class LoginGUI extends JFrame
         int ownerId = Integer.parseInt(ownerIdString);
         boolean isOwner = ownerCheckBox.isSelected();
 
-        if (checkForId(ownerId)) 
-        {
-            JOptionPane.showMessageDialog(null, "ID number already in use, please select another");
-        } 
-        else 
-        {
-            RegisterAccountClick userRegistered = new RegisterAccountClick(ownerId, userName);
-
+        if (insertUserIntoDatabase(ownerId, userName, isOwner)) {
             JOptionPane.showMessageDialog(null, "You have been registered");
-
-            String userData = "User " + userName + "\n" + "ID: " + ownerId + "\nOwner or client: "
-                + (isOwner ? "Owner" : "Client") + "\n";
-            String filename = "actionlog.txt";
-            writeToFile(userData, filename);
-            userList.add(userRegistered);
-
+            userList.add(new RegisterAccountClick(ownerId, userName));
             registerButtonFrame.dispose();
+        } else {
+            JOptionPane.showMessageDialog(null, "Failed to register. Please try again.");
         }
     });
 }
@@ -169,12 +166,11 @@ JFrame LoginAccountFrame = new JFrame("Login");
                 boolean isOwner = checkIfOwner(fullName, userID);
 
                 if (isOwner) {
-                    OwnerGUI  = new OwnerGUI();
-                    ownerGUI.createOwnerGUI();
-                    ownerGUI.setVisible(true);
+                    OwnerGUI ownerGUI = new OwnerGUI();
+                    ownerGUI.createOwnerGUI(serverSocket);
                 } else {
                     ClientGUI clientGUI = new ClientGUI();
-    clientGUI.createClientGUI();
+                    clientGUI.createClientGUI();
                 }
             }
 
@@ -185,42 +181,59 @@ JFrame LoginAccountFrame = new JFrame("Login");
 
         LoginAccountFrame.setVisible(true);
     }
-
     private boolean checkIfOwner(String fullName, String userID) {
         try (BufferedReader br = new BufferedReader(new FileReader("actionlog.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
-
-                String[] parts = line.split(" ");
-                if (fullName.equals(parts[0]) && userID.equals(parts[1]) && "Owner".equals(parts[2])) {
-                    return true;
+                if (line.startsWith("User " + fullName) && br.readLine().startsWith("ID: " + userID)) {
+                    String roleLine = br.readLine();
+                    return roleLine != null && roleLine.contains("Owner");
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace(); // Handle the exception appropriately
+            e.printStackTrace(); 
         }
         return false;
     }
 
+    // TRIED WORKING ON WRITING LOGIN TO THE TABLE. KEEPS CRASHING ME.
+    private boolean insertUserIntoDatabase(int ownerId, String userName, boolean isOwner) {
+        try {
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
 
-    private boolean checkForId(int ownerId) 
-    {
-        // Replace this 
-        return false;
-    }
+                    try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
 
-    private static boolean writeToFile(String data, String fileName) 
-    {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) 
-        {
-            writer.write(data);
-            writer.newLine();
+                        String query = "INSERT INTO user_table (user_id, full_name, is_owner) VALUES (?, ?, ?)";
+                        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                            preparedStatement.setInt(1, ownerId);
+                            preparedStatement.setString(2, userName);
+                            preparedStatement.setBoolean(3, isOwner);
+
+                            int rowsAffected = preparedStatement.executeUpdate();
+                            if (rowsAffected > 0) {
+                                System.out.println("User inserted successfully.");
+                            } else {
+                                System.out.println("User insertion failed.");
+                            }
+                        }
+                    }
+                } catch (ClassNotFoundException | SQLException e) {
+                    e.printStackTrace();
+                }
+            });
+
             return true;
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
+
+
+
+
 
     private JLabel createStyledLabel(String text) 
     {
