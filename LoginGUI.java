@@ -33,7 +33,7 @@ public class LoginGUI extends JFrame
     private ArrayList<RegisterAccountClick> userList = new ArrayList<>();
     private static final String DB_URL = "jdbc:mysql://localhost:3306/VC3";
     private static final String DB_USER = "localhost";
-    private static final String DB_PASSWORD = "Aniraam9835";
+    private static final String DB_PASSWORD = "Aniram9835";
 
     public static void main(String[] args) {
         new LoginGUI();
