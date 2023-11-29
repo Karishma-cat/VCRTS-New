@@ -16,7 +16,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -72,9 +71,11 @@ public class LoginGUI extends JFrame
         JButton loginButton = createStyledButton("Login");
         buttonPanel.add(loginButton);
 
-        ImageIcon imageIcon = new ImageIcon("FordMustang.png");
-        JLabel imageLabel = new JLabel(imageIcon);
-        mainPanel.add(imageLabel, BorderLayout.SOUTH);
+        //ImageIcon imageIcon = new ImageIcon("FordMustang.png");
+        //JLabel imageLabel = new JLabel(imageIcon);
+        //imageIcon.getScaledInstance(100, 100, imageIcon.SCALE_SMOOTh);
+
+        //mainPanel.add(imageLabel, BorderLayout.SOUTH);
 
         registerButton.addActionListener(e -> RegisterAccountClick());
         loginButton.addActionListener(e -> LoginAccountClick());

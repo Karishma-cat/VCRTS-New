@@ -14,7 +14,7 @@ public class ClientGUI extends LoginGUI {
 
     public void createClientGUI() {
         JFrame clientGUILogin = new JFrame("Client Panel");
-        clientGUILogin.setSize(300, 450);
+        clientGUILogin.setSize(300, 650);
         clientGUILogin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JLabel clientGUIWelcome = createStyledLabel("Please select from one of the options below");
