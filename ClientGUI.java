@@ -28,47 +28,63 @@ public class ClientGUI extends LoginGUI {
         clientSubmitJob.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new ClientGUI().ClientSubmitJobClick(); 
+                new ClientGUI().ClientSubmitJobClick();
             }
         });
-        
 
-        clientGUILogin.setLayout(null); 
+        clientGUILogin.setLayout(null);
         clientGUILogin.setVisible(true);
     }
 
     public void ClientSubmitJobClick() {
         JFrame ClientJobFrame = new JFrame("Job Submission");
         ClientJobFrame.setSize(400, 250);
-    
+
         JLabel jobTitle = createStyledLabel("What is the name of the task?");
         jobTitle.setBounds(20, 20, 250, 30);
         ClientJobFrame.add(jobTitle);
-    
+
         JTextField jobTitleTextField = new JTextField("");
         jobTitleTextField.setBounds(20, 50, 250, 30);
         ClientJobFrame.add(jobTitleTextField);
-    
+
         JLabel jobDuration = createStyledLabel("Approximate duration of task (in minutes):");
         jobDuration.setBounds(20, 90, 250, 30);
         ClientJobFrame.add(jobDuration);
-    
+
         JTextField jobDurationTextField = new JTextField("");
         jobDurationTextField.setBounds(20, 120, 250, 30);
         ClientJobFrame.add(jobDurationTextField);
-    
+
         JLabel jobDeadline = createStyledLabel("Job Deadline: (mm/dd/yyyy)");
         jobDeadline.setBounds(20, 160, 250, 30);
         ClientJobFrame.add(jobDeadline);
-    
+
         JTextField jobDeadlineTextField = new JTextField("");
         jobDeadlineTextField.setBounds(20, 190, 250, 30);
         ClientJobFrame.add(jobDeadlineTextField);
-    
+
+        JButton submitButton = createStyledButton("Submit");
+        submitButton.setBounds(150, 230, 100, 40);
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String taskName = jobTitleTextField.getText();
+                String duration = jobDurationTextField.getText();
+                String deadline = jobDeadlineTextField.getText();
+
+                System.out.println("Task Name: " + taskName);
+                System.out.println("Duration: " + duration + " minutes");
+                System.out.println("Deadline: " + deadline);
+                
+                
+            }
+        });
+        ClientJobFrame.add(submitButton);
+
         ClientJobFrame.setLayout(null);
         ClientJobFrame.setVisible(true);
     }
-    
 
     public static JButton createStyledButton(String text) {
         JButton button = new JButton(text);

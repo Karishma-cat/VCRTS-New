@@ -117,12 +117,12 @@ public class LoginGUI extends JFrame
 
         int ownerId = Integer.parseInt(ownerIdString);
         boolean isOwner = ownerCheckBox.isSelected();
-
-        if (checkForId(ownerId)) 
+        
+       // if (checkIfOwner(ownerId)) 
         {
             JOptionPane.showMessageDialog(null, "ID number already in use, please select another");
         } 
-        else 
+       // else 
         {
             RegisterAccountClick userRegistered = new RegisterAccountClick(ownerId, userName);
 
@@ -190,9 +190,9 @@ JFrame LoginAccountFrame = new JFrame("Login");
         try (BufferedReader br = new BufferedReader(new FileReader("actionlog.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] parts = line.split("\\s+"); 
-                if (parts.length >= 3 && fullName.equals(parts[0]) && userID.equals(parts[2])) {
-                    return true;
+                if (line.startsWith("User " + fullName) && br.readLine().startsWith("ID: " + userID)) {
+                    String roleLine = br.readLine();
+                    return roleLine != null && roleLine.contains("Owner");
                 }
             }
         } catch (IOException e) {

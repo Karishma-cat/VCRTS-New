@@ -7,11 +7,14 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
@@ -22,27 +25,39 @@ public class OwnerGUI extends LoginGUI {
         JFrame ownerGUILogin = new JFrame("Owner Panel");
         ownerGUILogin.setSize(300, 450);
         ownerGUILogin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+    
         JLabel ownerGUIWelcome = createStyledLabel("Please enter owner information");
         ownerGUIWelcome.setBounds(20, 20, 350, 30);
         ownerGUILogin.add(ownerGUIWelcome);
-
-        JTextField ownerIDTextField = createStyledTextField("Owner ID:");
-        ownerIDTextField.setBounds(20, 70, 350, 30);
+    
+        JLabel ownerIDLabel = createStyledLabel("Owner Id:");
+        ownerIDLabel.setBounds(20, 50, 350, 30);
+        ownerGUILogin.add(ownerIDLabel);
+    
+        JTextField ownerIDTextField = createStyledTextField("");
+        ownerIDTextField.setBounds(20, 80, 350, 30);
         ownerGUILogin.add(ownerIDTextField);
-
-        JTextField vehicleInfoTextField = createStyledTextField("Vehicle Information:");
-        vehicleInfoTextField.setBounds(20, 110, 350, 30);
+    
+        JLabel vehicleInfoLabel = createStyledLabel("Vehicle Info:");
+        vehicleInfoLabel.setBounds(20, 120, 350, 30);
+        ownerGUILogin.add(vehicleInfoLabel);
+    
+        JTextField vehicleInfoTextField = createStyledTextField("");
+        vehicleInfoTextField.setBounds(20, 150, 350, 30);
         ownerGUILogin.add(vehicleInfoTextField);
-
-        JTextField residencyTimeTextField = createStyledTextField("Residency Time:");
-        residencyTimeTextField.setBounds(20, 150, 350, 30);
+    
+        JLabel residencyTimeLabel = createStyledLabel("Residency Time:");
+        residencyTimeLabel.setBounds(20, 190, 350, 30);
+        ownerGUILogin.add(residencyTimeLabel);
+    
+        JTextField residencyTimeTextField = createStyledTextField("");
+        residencyTimeTextField.setBounds(20, 220, 350, 30);
         ownerGUILogin.add(residencyTimeTextField);
-
+    
         JButton submitButton = createStyledButton("Submit");
-        submitButton.setBounds(20, 190, 350, 40);
+        submitButton.setBounds(20, 260, 350, 40);
         ownerGUILogin.add(submitButton);
-
+    
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -51,7 +66,7 @@ public class OwnerGUI extends LoginGUI {
                 String residencyTime = residencyTimeTextField.getText();
     
                 writeToFile(ownerID, vehicleInfo);
-
+    
                 sendDataToServer(ownerID, vehicleInfo, residencyTime);
             }
         });
@@ -59,6 +74,7 @@ public class OwnerGUI extends LoginGUI {
         ownerGUILogin.setLayout(null);
         ownerGUILogin.setVisible(true);
     }
+    
 
 
     private void sendDataToServer(String ownerID, String vehicleInfo, String residencyTime) {
@@ -89,12 +105,17 @@ public class OwnerGUI extends LoginGUI {
 
     private static JTextField createStyledTextField(String labelText) {
         JTextField textField = new JTextField("");
-        textField.setBounds(20, 50, 250, 30);
+    textField.setBounds(20, 50, 250, 30);
 
-        JLabel label = createStyledLabel(labelText);
-        label.setBounds(20, 20, 250, 30);
+    JLabel label = createStyledLabel(labelText);
+    
+    label.setBounds(20, 20, 250, 30);
 
-        return textField;
+    JPanel panel = new JPanel(null);
+    panel.add(label);
+    panel.add(textField);
+
+    return textField;
     }
 
     private static JButton createStyledButton(String text) {
