@@ -9,6 +9,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 
 public class ClientGUI extends LoginGUI {
 
@@ -109,5 +114,24 @@ public class ClientGUI extends LoginGUI {
         label.setFont(new Font("Arial", Font.BOLD, 12));
         label.setForeground(new Color(128, 0, 32));
         return label;
+    }
+    private void savetoDataBase(String taskName, String duration, String deadline){
+        String url = "jdbc:mysql://localhost:3306/VC3";
+        String user = "localhost";
+        String pass =  "Aniram9835";
+
+        try (Connection connection = DriverManager.getConnection(url, user, pass)){
+            String sql = "INSERT INTO user_table(task_name, duration, deadline) VALUES (?, ?, ?)";
+            try( PreparedStatement statement = connection.prepareStatement(sql)){
+                statement.setString(1, taskName);
+                statement.setString(2, duration);
+                statement.setString(3, deadline);
+
+                statement.executeUpdate();
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
     }
 }
