@@ -117,21 +117,24 @@ public class ClientGUI extends LoginGUI {
     }
     private void savetoDataBase(String taskName, String duration, String deadline){
         String url = "jdbc:mysql://localhost:3306/VC3";
-        String user = "localhost";
-        String pass =  "Aniram9835";
+        String user = "root";
+        String pass =  "rootuser#1";
 
         try (Connection connection = DriverManager.getConnection(url, user, pass)){
-            String sql = "INSERT INTO user_table(task_name, duration, deadline) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO ClientInfo(task_name, duration, deadline) VALUES (?, ?, ?)";
             try( PreparedStatement statement = connection.prepareStatement(sql)){
                 statement.setString(1, taskName);
                 statement.setString(2, duration);
                 statement.setString(3, deadline);
 
                 statement.executeUpdate();
+                
+                    
+                
             }
         } catch (SQLException e){
             e.printStackTrace();
         }
-
+        
     }
 }
