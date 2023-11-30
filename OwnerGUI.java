@@ -54,14 +54,7 @@ public class OwnerGUI extends LoginGUI {
         residencyTimeTextField.setBounds(20, 220, 350, 30);
         ownerGUILogin.add(residencyTimeTextField);
 
-        
-        JLabel completionTimeLabel = createStyledLabel("Completion Time in Hours:");
-        completionTimeLabel.setBounds(20, 260, 350, 30);
-        ownerGUILogin.add(completionTimeLabel);
-
-        JTextField completionTimeTextField = createStyledTextField("");
-        completionTimeTextField.setBounds(20, 290, 350, 30);
-        ownerGUILogin.add(completionTimeTextField);
+       
 
         JButton submitButton = createStyledButton("Submit");
         submitButton.setBounds(20, 330, 350, 40);
@@ -73,11 +66,11 @@ public class OwnerGUI extends LoginGUI {
                 String ownerID = ownerIDTextField.getText();
                 String vehicleInfo = vehicleInfoTextField.getText();
                 String residencyTime = residencyTimeTextField.getText();
-                String completionTime = completionTimeTextField.getText();
+                
 
                 writeToFile(ownerID, vehicleInfo);
 
-                sendDataToServer(ownerID, vehicleInfo, residencyTime, completionTime);
+                sendDataToServer(ownerID, vehicleInfo, residencyTime);
             }
         });
 
@@ -85,12 +78,12 @@ public class OwnerGUI extends LoginGUI {
         ownerGUILogin.setVisible(true);
     }
 
-    private void sendDataToServer(String ownerID, String vehicleInfo, String residencyTime, String completionTime) {
+    private void sendDataToServer(String ownerID, String vehicleInfo, String residencyTime) {
         try (Socket socket = new Socket("localhost", 12345);
              PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))
         ) {
-            String data = ownerID + "," + vehicleInfo + "," + residencyTime + "," + completionTime;
+            String data = ownerID + "," + vehicleInfo + "," + residencyTime ;
             writer.println(data);
 
             String response = reader.readLine();
