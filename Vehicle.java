@@ -1,20 +1,20 @@
 public class Vehicle {
-	private int ownerId;
+	private int vehicleId;
     private VehicleOwner requester;
     private boolean completed;
 
     public Vehicle(int ownerId, VehicleOwner requester, boolean completed) {
-        this.ownerId = ownerId;
+        this.vehicleId = ownerId;
         this.requester = requester;
         this.completed = completed;
     }
 
-    public int getOwnerId() {
-        return ownerId;
+    public int getVehicleId() {
+        return vehicleId;
     }
 
-    public void setOwnerId(int ownerId) {
-        this.ownerId = ownerId;
+    public void setVehicleId(int vehicleId) {
+        this.vehicleId = vehicleId;
     }
 
     public VehicleOwner getRequester() {
