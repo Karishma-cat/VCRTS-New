@@ -12,13 +12,16 @@ import java.sql.SQLException;
 public class VC {
     private ServerSocket serverSocket;
     private boolean acceptingRequests;
-    private Connection databaseConnection;
+    private  Connection databaseConnection;
+    static String url = "jdbc:mysql://localhost:3306/VC3?useTimezone=true&serverTimezone=UTC";
+	static String username = "root";
+	static String password = "rootuser#1";
 
     public VC(int port) {
         try {
             serverSocket = new ServerSocket(port);
             acceptingRequests = true;
-            databaseConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/VC3?useTimezone=true&serverTimezone=UTC\" ;", "localhost", "Database@1*");
+            databaseConnection = DriverManager.getConnection(url, username, password);
             System.out.println("VC Controller is running and waiting for connections on port " + port);
 
             new Thread(this::acceptClientConnections).start();

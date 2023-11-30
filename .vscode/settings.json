@@ -3,6 +3,7 @@
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
         "mysql-connector-j-8.2.0.jar",
-        "/Users/alexfox/Desktop/mysql-connector-j-8.2.0.jar"
+        "/Users/alexfox/Desktop/mysql-connector-j-8.2.0.jar",
+        "/Users/avery/Downloads/mysql-connector-java-8.0.19/mysql-connector-java-8.0.19.jar"
     ]
 }
