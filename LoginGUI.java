@@ -12,6 +12,7 @@ import java.net.Socket;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -32,8 +33,8 @@ public class LoginGUI extends JFrame
     private JCheckBox ownerCheckBox;
     private ArrayList<RegisterAccountClick> userList = new ArrayList<>();
     private static final String DB_URL = "jdbc:mysql://localhost:3306/VC3";
-    private static final String DB_USER = "localhost";
-    private static final String DB_PASSWORD = "Aniram9835";
+    private static final String DB_USER = "root";
+    private static final String DB_PASSWORD = "rootuser#1";
 
     public static void main(String[] args) {
         new LoginGUI();
@@ -134,9 +135,8 @@ public class LoginGUI extends JFrame
         }
     });
 }
-private void LoginAccountClick()
-{
-JFrame LoginAccountFrame = new JFrame("Login");
+private void LoginAccountClick() {
+        JFrame LoginAccountFrame = new JFrame("Login");
         LoginAccountFrame.setSize(300, 350);
 
         JPanel panel = new JPanel();
@@ -164,7 +164,7 @@ JFrame LoginAccountFrame = new JFrame("Login");
                 String fullName = LoginNameText.getText();
                 String userID = userIDText.getText();
 
-                boolean isOwner = checkIfOwner(fullName, userID);
+                boolean isOwner = checkIfOwnerInDatabase(fullName, userID);
 
                 if (isOwner) {
                     OwnerGUI ownerGUI = new OwnerGUI();
@@ -174,7 +174,6 @@ JFrame LoginAccountFrame = new JFrame("Login");
                     clientGUI.createClientGUI();
                 }
             }
-
         });
 
         panel.add(inputPanel, BorderLayout.CENTER);
@@ -182,58 +181,52 @@ JFrame LoginAccountFrame = new JFrame("Login");
 
         LoginAccountFrame.setVisible(true);
     }
-    private boolean checkIfOwner(String fullName, String userID) {
-        try (BufferedReader br = new BufferedReader(new FileReader("actionlog.txt"))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.startsWith("User " + fullName) && br.readLine().startsWith("ID: " + userID)) {
-                    String roleLine = br.readLine();
-                    return roleLine != null && roleLine.contains("Owner");
+
+    private boolean checkIfOwnerInDatabase(String fullName, String userID) {
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            String query = "SELECT is_owner FROM user_table WHERE full_name = ? AND user_id = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, fullName);
+                preparedStatement.setString(2, userID);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        return resultSet.getBoolean("is_owner");
+                    }
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace(); 
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return false;
     }
 
-    // TRIED WORKING ON WRITING LOGIN TO THE TABLE. KEEPS CRASHING ME.
     private boolean insertUserIntoDatabase(int ownerId, String userName, boolean isOwner) {
-        try {
-            SwingUtilities.invokeLater(() -> {
-                try {
-                    Class.forName("com.mysql.cj.jdbc.Driver");
-
-                    try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-
-                        String query = "INSERT INTO user_table (user_id, full_name, is_owner) VALUES (?, ?, ?)";
-                        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                            preparedStatement.setInt(1, ownerId);
-                            preparedStatement.setString(2, userName);
-                            preparedStatement.setBoolean(3, isOwner);
-
-                            int rowsAffected = preparedStatement.executeUpdate();
-                            if (rowsAffected > 0) {
-                                System.out.println("User inserted successfully.");
-                            } else {
-                                System.out.println("User insertion failed.");
-                            }
-                        }
-                    }
-                } catch (ClassNotFoundException | SQLException e) {
-                    e.printStackTrace();
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+    
+            String query = "INSERT INTO user_table (user_id, full_name, is_owner) VALUES (?, ?, ?)";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, ownerId);
+                preparedStatement.setString(2, userName);
+                preparedStatement.setBoolean(3, isOwner);
+    
+                int rowsAffected = preparedStatement.executeUpdate();
+                if (rowsAffected > 0) {
+                    System.out.println("User inserted successfully.");
+                    return true;
+                } else {
+                    System.out.println("User insertion failed.");
+                    return false;
                 }
-            });
-
-            return true;
-        } catch (Exception e) {
+            }
+    
+        } catch (SQLException e) {
+            System.out.println("A SQL exception occurred while trying to insert user into the database");
             e.printStackTrace();
             return false;
         }
     }
-
-
-
+    
 
 
     private JLabel createStyledLabel(String text) 
