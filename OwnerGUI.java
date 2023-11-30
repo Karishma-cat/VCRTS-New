@@ -3,13 +3,17 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
+//import java.io.BufferedReader;
+//import java.io.BufferedWriter;
+//import java.io.FileWriter;
+//import java.io.IOException;
+//import java.io.InputStreamReader;
+//import java.io.PrintWriter;
+//import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -19,9 +23,9 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
 public class OwnerGUI extends LoginGUI {
-    private Socket serverSocket;
+   // private Socket serverSocket;
 
-    public void createOwnerGUI(Socket serverSocket) {
+    public void createOwnerGUI() {
         JFrame ownerGUILogin = new JFrame("Owner Panel");
         ownerGUILogin.setSize(400, 500); 
         ownerGUILogin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -54,8 +58,6 @@ public class OwnerGUI extends LoginGUI {
         residencyTimeTextField.setBounds(20, 220, 350, 30);
         ownerGUILogin.add(residencyTimeTextField);
 
-       
-
         JButton submitButton = createStyledButton("Submit");
         submitButton.setBounds(20, 330, 350, 40);
         ownerGUILogin.add(submitButton);
@@ -67,10 +69,12 @@ public class OwnerGUI extends LoginGUI {
                 String vehicleInfo = vehicleInfoTextField.getText();
                 String residencyTime = residencyTimeTextField.getText();
                 
+                System.out.println("Owner id: " + ownerID);
+                System.out.println("Vehicle Info: " + vehicleInfo);
+                System.out.println("Residency Time: " + residencyTime);
 
-                writeToFile(ownerID, vehicleInfo);
-
-                sendDataToServer(ownerID, vehicleInfo, residencyTime);
+               // writeToFile(ownerID, vehicleInfo);
+               // sendDataToServer(ownerID, vehicleInfo, residencyTime);
             }
         });
 
@@ -78,7 +82,7 @@ public class OwnerGUI extends LoginGUI {
         ownerGUILogin.setVisible(true);
     }
 
-    private void sendDataToServer(String ownerID, String vehicleInfo, String residencyTime) {
+  /*  private void sendDataToServer(String ownerID, String vehicleInfo, String residencyTime) {
         try (Socket socket = new Socket("localhost", 12345);
              PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))
@@ -91,16 +95,16 @@ public class OwnerGUI extends LoginGUI {
 
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
+        } */
+   
 
-    public static void main(String[] args) {
+  /*  public static void main(String[] args) {
         try (Socket serverSocket = new Socket("localhost", 12345)) {
             new OwnerGUI().createOwnerGUI(serverSocket);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     private static JTextField createStyledTextField(String labelText) {
         JTextField textField = new JTextField("");
@@ -141,8 +145,28 @@ public class OwnerGUI extends LoginGUI {
         label.setForeground(new Color(128, 0, 32));
         return label;
     }
+    private void savetoDataBase(String ownerID, String vehicleInfo, String residencyTime){
+        String url = "jdbc:mysql://localhost:3306/VC3";
+        String user = "root";
+        String pass =  "rootuser#1";
 
-    private static boolean writeToFile(String data, String fileName) {
+        try (Connection connection = DriverManager.getConnection(url, user, pass)){
+            String sql = "INSERT INTO OwnerInfo(owner id, vehicle info, residency time) VALUES (?, ?, ?)";
+            try( PreparedStatement statement = connection.prepareStatement(sql)){
+                statement.setString(1, ownerID);
+                statement.setString(2, vehicleInfo);
+                statement.setString(3, residencyTime);
+
+                statement.executeUpdate();
+                
+                    
+                
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+  /*  private static boolean writeToFile(String data, String fileName) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
             writer.write(data);
             writer.newLine();
@@ -151,5 +175,5 @@ public class OwnerGUI extends LoginGUI {
             e.printStackTrace();
             return false;
         }
-    }
-}
+    } */
+} }
