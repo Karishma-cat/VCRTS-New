@@ -45,13 +45,13 @@ public class ClientGUI extends LoginGUI {
         JFrame ClientJobFrame = new JFrame("Job Submission");
         ClientJobFrame.setSize(400, 250);
 
-        JLabel jobTitle = createStyledLabel("Client ID:");
-        jobTitle.setBounds(20, 20, 250, 30);
-        ClientJobFrame.add(jobTitle);
+        JLabel jobID = createStyledLabel("Client ID:");
+        jobID.setBounds(20, 20, 250, 30);
+        ClientJobFrame.add(jobID);
 
-        JTextField jobTitleTextField = new JTextField("");
-        jobTitleTextField.setBounds(20, 50, 250, 30);
-        ClientJobFrame.add(jobTitleTextField);
+        JTextField jobIDTextField = new JTextField("");
+        jobIDTextField.setBounds(20, 50, 250, 30);
+        ClientJobFrame.add(jobIDTextField);
 
         JLabel jobDuration = createStyledLabel("Approximate duration of Task (in minutes):");
         jobDuration.setBounds(20, 90, 250, 30);
@@ -74,7 +74,7 @@ public class ClientGUI extends LoginGUI {
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String clientid = jobTitleTextField.getText();
+                String clientid = jobIDTextField.getText();
                 String duration = jobDurationTextField.getText();
                 String deadline = jobDeadlineTextField.getText();
 
@@ -115,6 +115,7 @@ public class ClientGUI extends LoginGUI {
         label.setForeground(new Color(128, 0, 32));
         return label;
     }
+    
     private void savetoDataBase(String clientid, String duration, String deadline){
         String url = "jdbc:mysql://localhost:3306/VC3";
         String user = "root";
