@@ -22,11 +22,11 @@ public class ClientGUI extends LoginGUI {
         clientGUILogin.setSize(300, 650);
         clientGUILogin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JLabel clientGUIWelcome = createStyledLabel("Please select from one of the options below");
+        JLabel clientGUIWelcome = createStyledLabel("Please select from one of the options below: ");
         clientGUIWelcome.setBounds(20, 20, 250, 30);
         clientGUILogin.add(clientGUIWelcome);
 
-        JButton clientSubmitJob = createStyledButton("Submit a job");
+        JButton clientSubmitJob = createStyledButton("Submit a Job");
         clientSubmitJob.setBounds(20, 70, 250, 40);
         clientGUILogin.add(clientSubmitJob);
 
@@ -45,7 +45,7 @@ public class ClientGUI extends LoginGUI {
         JFrame ClientJobFrame = new JFrame("Job Submission");
         ClientJobFrame.setSize(400, 250);
 
-        JLabel jobTitle = createStyledLabel("What is the name of the task?");
+        JLabel jobTitle = createStyledLabel("Client ID:");
         jobTitle.setBounds(20, 20, 250, 30);
         ClientJobFrame.add(jobTitle);
 
@@ -53,7 +53,7 @@ public class ClientGUI extends LoginGUI {
         jobTitleTextField.setBounds(20, 50, 250, 30);
         ClientJobFrame.add(jobTitleTextField);
 
-        JLabel jobDuration = createStyledLabel("Approximate duration of task (in minutes):");
+        JLabel jobDuration = createStyledLabel("Approximate duration of Task (in minutes):");
         jobDuration.setBounds(20, 90, 250, 30);
         ClientJobFrame.add(jobDuration);
 
@@ -61,7 +61,7 @@ public class ClientGUI extends LoginGUI {
         jobDurationTextField.setBounds(20, 120, 250, 30);
         ClientJobFrame.add(jobDurationTextField);
 
-        JLabel jobDeadline = createStyledLabel("Job Deadline: (mm/dd/yyyy)");
+        JLabel jobDeadline = createStyledLabel("Job Deadline:(mm/dd/yyyy) ");
         jobDeadline.setBounds(20, 160, 250, 30);
         ClientJobFrame.add(jobDeadline);
 
@@ -74,11 +74,11 @@ public class ClientGUI extends LoginGUI {
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String taskName = jobTitleTextField.getText();
+                String clientid = jobTitleTextField.getText();
                 String duration = jobDurationTextField.getText();
                 String deadline = jobDeadlineTextField.getText();
 
-                System.out.println("Task Name: " + taskName);
+                System.out.println("Client ID: " + clientid);
                 System.out.println("Duration: " + duration + " minutes");
                 System.out.println("Deadline: " + deadline);
                 
@@ -115,15 +115,15 @@ public class ClientGUI extends LoginGUI {
         label.setForeground(new Color(128, 0, 32));
         return label;
     }
-    private void savetoDataBase(String taskName, String duration, String deadline){
+    private void savetoDataBase(String clientid, String duration, String deadline){
         String url = "jdbc:mysql://localhost:3306/VC3";
         String user = "root";
         String pass =  "rootuser#1";
 
         try (Connection connection = DriverManager.getConnection(url, user, pass)){
-            String sql = "INSERT INTO ClientInfo(task_name, duration, deadline) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO ClientInfo(clientID, duration, deadline) VALUES (?, ?, ?)";
             try( PreparedStatement statement = connection.prepareStatement(sql)){
-                statement.setString(1, taskName);
+                statement.setString(1, clientid);
                 statement.setString(2, duration);
                 statement.setString(3, deadline);
 
