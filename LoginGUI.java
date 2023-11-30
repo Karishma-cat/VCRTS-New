@@ -168,7 +168,7 @@ private void LoginAccountClick() {
 
                 if (isOwner) {
                     OwnerGUI ownerGUI = new OwnerGUI();
-                    ownerGUI.createOwnerGUI(serverSocket);
+                    ownerGUI.createOwnerGUI();
                 } else {
                     ClientGUI clientGUI = new ClientGUI();
                     clientGUI.createClientGUI();
