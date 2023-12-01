@@ -72,6 +72,8 @@ public class OwnerGUI extends LoginGUI {
                 System.out.println("Owner id: " + ownerID);
                 System.out.println("Vehicle Info: " + vehicleInfo);
                 System.out.println("Residency Time: " + residencyTime);
+               
+               saveData(ownerID,vehicleInfo,residencyTime);
 
                // writeToFile(ownerID, vehicleInfo);
                // sendDataToServer(ownerID, vehicleInfo, residencyTime);
@@ -145,13 +147,13 @@ public class OwnerGUI extends LoginGUI {
         label.setForeground(new Color(128, 0, 32));
         return label;
     }
-    private void savetoDataBase(String ownerID, String vehicleInfo, String residencyTime){
+    private void saveData(String ownerID, String vehicleInfo, String residencyTime){
         String url = "jdbc:mysql://localhost:3306/VC3";
         String user = "root";
         String pass =  "rootuser#1";
 
         try (Connection connection = DriverManager.getConnection(url, user, pass)){
-            String sql = "INSERT INTO OwnerInfo(owner id, vehicle info, residency time) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO OwnerInfo(ownerID, vehicleInfo, residencyTime) VALUES (?, ?, ?)";
             try( PreparedStatement statement = connection.prepareStatement(sql)){
                 statement.setString(1, ownerID);
                 statement.setString(2, vehicleInfo);
