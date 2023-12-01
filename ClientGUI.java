@@ -127,7 +127,15 @@ public class ClientGUI extends LoginGUI {
                 statement.setString(2, duration);
                 statement.setString(3, deadline);
 
-                statement.executeUpdate();
+                
+                int rowsAffected = statement.executeUpdate();
+
+                if(rowsAffected > 0) {
+                    System.out.println("Data has been saved");
+                    
+                } else {
+                    System.out.println("Data failed to save");
+                }
                 
                     
                 
