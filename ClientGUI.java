@@ -82,6 +82,8 @@ public class ClientGUI extends LoginGUI {
                 System.out.println("Duration: " + duration + " minutes");
                 System.out.println("Deadline: " + deadline);
                 
+                savetoDataBase(clientid,duration,deadline);
+                
                 
             }
         });
