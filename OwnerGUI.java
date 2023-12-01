@@ -18,6 +18,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
+import org.w3c.dom.UserDataHandler;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 public class OwnerGUI extends LoginGUI {
     private Socket serverSocket;
 
@@ -89,10 +96,45 @@ public class OwnerGUI extends LoginGUI {
             String response = reader.readLine();
             System.out.println("Received response from server: " + response);
 
+            savetoDataBase(ownerID, vehicleInfo, residencyTime);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+    private void savetoDataBase(String ownerID, String vehicleInfo, String residencyTime){
+        String url = "jdbc:mysql://localhost:3306/VC3";
+        String user = "root";
+        String password = "rootuser#1";
+
+        try (Connection connection = DriverManager.getConnection(url, user, password)){
+            String sql = "INSERT INTO ownerTable(ownerID, vehicleInfo, recidencyTime) VALUES (?, ?, ?)";
+            try( PreparedStatement statement = connection.prepareStatement(sql)){
+                statement.setString(1, ownerID);
+                statement.setString(2, vehicleInfo);
+                statement.setString(3, residencyTime);
+
+                
+                int rowsAffected = statement.executeUpdate();
+                if(rowsAffected > 0){
+                    System.out.println("Data was saved successfully to SQL");
+                } else{
+                    System.out.println("Data was not saved onto SQL");
+                }
+    } catch(SQLException e){
+        e.printStackTrace();
+    }
+} catch(SQLException e){
+    e.printStackTrace();
+}
+    
+
+    }
+
+
+    
+
+    
 
     public static void main(String[] args) {
         try (Socket serverSocket = new Socket("localhost", 12345)) {
@@ -151,5 +193,6 @@ public class OwnerGUI extends LoginGUI {
             e.printStackTrace();
             return false;
         }
+        
     }
 }
