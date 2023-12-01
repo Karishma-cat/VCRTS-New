@@ -105,10 +105,10 @@ public class OwnerGUI extends LoginGUI {
     private void savetoDataBase(String ownerID, String vehicleInfo, String residencyTime){
         String url = "jdbc:mysql://localhost:3306/VC3";
         String user = "root";
-        String password = "rootuser#1";
+        String password = "Aniram9835";
 
         try (Connection connection = DriverManager.getConnection(url, user, password)){
-            String sql = "INSERT INTO ownerTable(ownerID, vehicleInfo, recidencyTime) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO ownerTable(owner_ID, vehicle_info, recidency_time) VALUES (?, ?, ?)";
             try( PreparedStatement statement = connection.prepareStatement(sql)){
                 statement.setString(1, ownerID);
                 statement.setString(2, vehicleInfo);

@@ -3,7 +3,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.util.Date;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -13,6 +13,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 
 public class ClientGUI extends LoginGUI {
@@ -76,8 +79,14 @@ public class ClientGUI extends LoginGUI {
             public void actionPerformed(ActionEvent e) {
                 String clientid = jobIDTextField.getText();
                 String duration = jobDurationTextField.getText();
-                String deadline = jobDeadlineTextField.getText();
-
+                DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                Date deadline = null;
+                try {
+                    deadline = dateFormat.parse(jobDeadlineTextField.getText());
+                } catch (ParseException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
                 System.out.println("Client ID: " + clientid);
                 System.out.println("Duration: " + duration + " minutes");
                 System.out.println("Deadline: " + deadline);
@@ -118,17 +127,18 @@ public class ClientGUI extends LoginGUI {
         return label;
     }
     
-    private void savetoDataBase(String clientid, String duration, String deadline){
+    private void savetoDataBase(String clientid, String duration, Date deadline){
         String url = "jdbc:mysql://localhost:3306/VC3";
         String user = "root";
-        String pass =  "rootuser#1";
+        String pass =  "Aniram9835";
+java.sql.Date sqlDate = new java.sql.Date(deadline.getTime());
 
         try (Connection connection = DriverManager.getConnection(url, user, pass)){
-            String sql = "INSERT INTO ClientInfo(clientID, duration, deadline) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO clientSubmissions(client_ID, duration_minutes, submission_date) VALUES (?, ?, ?)";
             try( PreparedStatement statement = connection.prepareStatement(sql)){
                 statement.setString(1, clientid);
                 statement.setString(2, duration);
-                statement.setString(3, deadline);
+                statement.setDate(3, sqlDate);
 
                 
                 int rowsAffected = statement.executeUpdate();

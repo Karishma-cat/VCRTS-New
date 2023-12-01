@@ -15,7 +15,7 @@ public class VC {
     private  Connection databaseConnection;
     static String url = "jdbc:mysql://localhost:3306/VC3?useTimezone=true&serverTimezone=UTC";
 	static String username = "root";
-	static String password = "rootuser#1";
+	static String password = "Aniram9835";
 
     public VC(int port) {
         try {
