@@ -5,15 +5,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
@@ -26,7 +30,12 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class OwnerGUI extends LoginGUI {
-    private Socket serverSocket;
+    String messageOut="";
+    String messageIn="";
+    ServerSocket serverSocket;
+	Socket socket;
+	DataInputStream inputStream;
+	DataOutputStream outputStream;
 
     public void createOwnerGUI(Socket serverSocket) {
         JFrame ownerGUILogin = new JFrame("Owner Panel");
@@ -73,13 +82,24 @@ public class OwnerGUI extends LoginGUI {
                 String ownerID = ownerIDTextField.getText();
                 String vehicleInfo = vehicleInfoTextField.getText();
                 String residencyTime = residencyTimeTextField.getText();
-                
+                messageOut="owner"+","+ownerID+","+vehicleInfo+","+residencyTime;
+                try{
+                socket = new Socket("localhost", 9808);
+                outputStream.writeUTF(messageOut);
+                messageIn = inputStream.readUTF();
+                }catch (Exception e1) {
+                    e1.printStackTrace();
 
-                writeToFile(ownerID, vehicleInfo);
-
-                sendDataToServer(ownerID, vehicleInfo, residencyTime);
+                if(messageIn.equals("Accept")){
+                    JOptionPane.showMessageDialog(null, "Vehicle was saved");
+                    ownerGUILogin.dispose();
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "Vehicle was not saved");
+                }
+                //sendDataToServer(ownerID, vehicleInfo, residencyTime);
             }
-        });
+        }});
 
         ownerGUILogin.setLayout(null);
         ownerGUILogin.setVisible(true);
@@ -137,7 +157,7 @@ public class OwnerGUI extends LoginGUI {
     
 
     public static void main(String[] args) {
-        try (Socket serverSocket = new Socket("localhost", 12345)) {
+        try (Socket serverSocket = new Socket("localhost", 9808)) {
             new OwnerGUI().createOwnerGUI(serverSocket);
         } catch (IOException e) {
             e.printStackTrace();

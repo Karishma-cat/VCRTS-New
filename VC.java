@@ -1,4 +1,6 @@
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -8,77 +10,36 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.border.LineBorder;
 
 public class VC {
-    private ServerSocket serverSocket;
-    private boolean acceptingRequests;
-    private  Connection databaseConnection;
+    static ServerSocket serverSocket;
+	static Socket socket;
+	static DataInputStream inputStream;
+	static DataOutputStream outputStream;
+    static Connection databaseConnection;
     static String url = "jdbc:mysql://localhost:3306/VC3?useTimezone=true&serverTimezone=UTC";
 	static String username = "root";
 	static String password = "Aniram9835";
+    static Date third1;
 
-    public VC(int port) {
+
+    private static void saveOwnerToDB(String ownerID, String vehicleInfo, String residencyTime) {
         try {
-            serverSocket = new ServerSocket(port);
-            acceptingRequests = true;
-            databaseConnection = DriverManager.getConnection(url, username, password);
-            System.out.println("VC Controller is running and waiting for connections on port " + port);
-
-            new Thread(this::acceptClientConnections).start();
-        } catch (IOException | SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void acceptClientConnections() {
-        while (acceptingRequests) {
-            try {
-                Socket clientSocket = serverSocket.accept();
-                System.out.println("Accepted connection from " + clientSocket.getInetAddress());
-                handleClient(clientSocket);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void handleClient(Socket clientSocket) {
-        try (
-            BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true)
-        ) {
-
-            String dataFromClient = reader.readLine();
-            System.out.println("Received data from client: " + dataFromClient);
-
-            boolean authorizeData = authorizeData(dataFromClient);
-
-
-            String response = authorizeData ? "Accepted" : "Rejected";
-            writer.println(response);
-            System.out.println("Sent response to client: " + response);
-
-
-            if (authorizeData) {
-                insertDataIntoDatabase(dataFromClient);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private boolean authorizeData(String data) {
-        return true;
-    }
-
-    private void insertDataIntoDatabase(String data) {
-        try {
-            String[] parts = data.split(",");
-            String ownerID = parts[0];
-            String vehicleInfo = parts[1];
-            String residencyTime = parts[2];
-
-            String insertQuery = "INSERT INTO jobSubmissions (owner_id, vehicle_info, residency_time, status) VALUES (?, ?, ?, 'Accepted')";
+            String insertQuery = "INSERT INTO jobSubmissions(owner_id, vehicle_info, residency_time, status) VALUES (?, ?, ?, 'Accepted')";
             try (PreparedStatement preparedStatement = databaseConnection.prepareStatement(insertQuery)) {
                 preparedStatement.setString(1, ownerID);
                 preparedStatement.setString(2, vehicleInfo);
@@ -90,19 +51,97 @@ public class VC {
         }
     }
 
-    public void stop() {
-        acceptingRequests = false;
+    private static void saveJobsToDB(String clientID, String duration, Date deadLine) {
+        java.sql.Date sqlDate = new java.sql.Date(deadLine.getTime());
         try {
-            serverSocket.close();
-            databaseConnection.close();
-        } catch (IOException | SQLException e) {
+            String insertQuery = "INSERT INTO clientSubmissions(client_ID, duration_minutes, submission_date) VALUES (?, ?, ?)";
+            try (PreparedStatement preparedStatement = databaseConnection.prepareStatement(insertQuery)) {
+                preparedStatement.setString(1, clientID);
+                preparedStatement.setString(2, duration);
+                preparedStatement.setDate(3, sqlDate);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public static void main(String[] args) {
-        int port = 12345; 
-        VC vc = new VC(port);
+        String messageIn= "";
+		String messageOut = "";
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        try{
+            // creating the server
+			serverSocket = new ServerSocket(9808);
+        }catch (Exception e) {
+			e.printStackTrace();
+        }
 
+        while(!messageIn.equals("end")) {
+            try {
+			// sever accepts connection request from client
+			socket = serverSocket.accept();
+
+			// server reads a message message from client
+			inputStream = new DataInputStream(socket.getInputStream());
+
+			// server sends a message to client
+			outputStream = new DataOutputStream(socket.getOutputStream());
+
+            messageIn = inputStream.readUTF();
+
+            String[] parts = messageIn.split(",");
+            String determine= parts[0];
+            String first = parts[1];
+            String second = parts[2];
+            String third = parts[3];
+
+			JFrame serverChoice = new JFrame("Server choice");
+		        serverChoice.setSize(300, 450);
+		        
+		        JButton pass = new JButton("Accept request");
+		        pass.setBounds(20, 260, 250, 30);
+		        serverChoice.add(pass);
+		        
+		        JButton deny = new JButton("Reject request");
+		        deny.setBounds(20, 320, 250, 30);
+		        serverChoice.add(deny);
+		        
+		        pass.addActionListener(x -> {
+                    try {
+                    third1=dateFormat.parse(third);
+                    } catch (ParseException e) {
+                    e.printStackTrace();
+                    }
+					try {
+                        if(determine.equals("job")){
+                            saveJobsToDB(first, second,third1);
+                        }
+                        else if(determine.equals("owner")){
+                            saveOwnerToDB(first, second, third);
+                        }
+						outputStream.writeUTF("Accept");
+					} catch (IOException e) {
+						e.printStackTrace();
+					};
+					serverChoice.dispose();
+		        });
+		        
+		        deny.addActionListener(x -> {
+					try {
+						outputStream.writeUTF("Deny");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					serverChoice.dispose();
+		        });
+
+                serverChoice.setVisible(true);
+
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+        }
     }
 }

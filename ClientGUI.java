@@ -3,10 +3,15 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Date;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import java.sql.Connection;
@@ -19,6 +24,12 @@ import java.text.SimpleDateFormat;
 
 
 public class ClientGUI extends LoginGUI {
+    String messageOut="";
+    String messageIn="";
+    ServerSocket serverSocket;
+	Socket socket;
+	DataInputStream inputStream;
+	DataOutputStream outputStream;
 
     public void createClientGUI() {
         JFrame clientGUILogin = new JFrame("Client Panel");
@@ -87,15 +98,29 @@ public class ClientGUI extends LoginGUI {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
-                System.out.println("Client ID: " + clientid);
-                System.out.println("Duration: " + duration + " minutes");
-                System.out.println("Deadline: " + deadline);
+                messageOut="job"+","+clientid+","+duration+","+deadline;
+                try{
+                socket = new Socket("localhost", 9808);
+                outputStream.writeUTF(messageOut);
+                messageIn = inputStream.readUTF();
+                }catch (Exception e1) {
+                    e1.printStackTrace();
+
+                if(messageIn.equals("Accept")){
+                    JOptionPane.showMessageDialog(null, "Job has been submitted");
+                    ClientJobFrame.dispose();
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "Job was not submitted");
+                }
+               // System.out.println("Client ID: " + clientid);
+                //System.out.println("Duration: " + duration + " minutes");
+                //System.out.println("Deadline: " + deadline);
                 
-                savetoDataBase(clientid,duration,deadline);
-                
+                //savetoDataBase(clientid,duration,deadline)                
                 
             }
-        });
+        }});
         ClientJobFrame.add(submitButton);
 
         ClientJobFrame.setLayout(null);
