@@ -57,7 +57,7 @@ public class ClientGUI extends LoginGUI {
 
     public void ClientSubmitJobClick() {
         JFrame ClientJobFrame = new JFrame("Job Submission");
-        ClientJobFrame.setSize(400, 250);
+        ClientJobFrame.setSize(400, 350);
 
         JLabel jobID = createStyledLabel("Client ID:");
         jobID.setBounds(20, 20, 250, 30);
