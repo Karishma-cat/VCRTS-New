@@ -81,14 +81,14 @@ public class ClientGUI extends LoginGUI {
         ClientJobFrame.add(jobDeadlineTextField);
 
         JButton submitButton = createStyledButton("Submit");
-        submitButton.setBounds(20, 230, 100, 40);
+        submitButton.setBounds(20, 290, 250, 30);
 
         JTextField clientIdField = new JTextField("");
         clientIdField.setBounds(20, 60, 200, 30);
         ClientJobFrame.add(clientIdField);
 
         JButton calButton = createStyledButton("Calculate completion time");
-        calButton.setBounds(20, 290, 250, 30);
+        calButton.setBounds(20, 230, 250, 30);
         calButton.setPreferredSize(new Dimension(200, 40));
         calButton.setFont(new Font("Arial", Font.BOLD, 14));
         ClientJobFrame.add(calButton);
