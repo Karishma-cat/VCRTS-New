@@ -34,7 +34,7 @@ public class VC {
     static Connection databaseConnection;
     static String url = "jdbc:mysql://localhost:3306/VC3?useTimezone=true&serverTimezone=UTC";
     static String username = "root";
-    static String password = "Aniram9835";
+    static String password = "rootuser#1";
     static Date third1;
 
     private static void saveOwnerToDB(String ownerID, String vehicleInfo, String residencyTime) {
@@ -75,7 +75,9 @@ public class VC {
             serverSocket = new ServerSocket(9808);
             databaseConnection = DriverManager.getConnection(url, username, password);
 
-            while (true) {
+            socket = serverSocket.accept();
+
+            while (!messageIn.equals("end")) {
                 try {
                     // sever accepts connection request from client
                     socket = serverSocket.accept();

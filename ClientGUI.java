@@ -101,11 +101,10 @@ public class ClientGUI extends LoginGUI {
                 messageOut="job"+","+clientid+","+duration+","+deadline;
                 try{
                 socket = new Socket("localhost", 9808);
+                inputStream = new DataInputStream(socket.getInputStream());
+    			outputStream = new DataOutputStream(socket.getOutputStream());
                 outputStream.writeUTF(messageOut);
                 messageIn = inputStream.readUTF();
-                }catch (Exception e1) {
-                    e1.printStackTrace();
-
                 if(messageIn.equals("Accept")){
                     JOptionPane.showMessageDialog(null, "Job has been submitted");
                     ClientJobFrame.dispose();
@@ -113,13 +112,17 @@ public class ClientGUI extends LoginGUI {
                 else{
                     JOptionPane.showMessageDialog(null, "Job was not submitted");
                 }
+                }catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+                
                // System.out.println("Client ID: " + clientid);
                 //System.out.println("Duration: " + duration + " minutes");
                 //System.out.println("Deadline: " + deadline);
                 
                 //savetoDataBase(clientid,duration,deadline)                
                 
-            }
+            
         }});
         ClientJobFrame.add(submitButton);
 

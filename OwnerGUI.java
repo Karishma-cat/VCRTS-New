@@ -85,20 +85,21 @@ public class OwnerGUI extends LoginGUI {
                 messageOut="owner"+","+ownerID+","+vehicleInfo+","+residencyTime;
                 try{
                 socket = new Socket("localhost", 9808);
+                inputStream = new DataInputStream(socket.getInputStream());
+    			outputStream = new DataOutputStream(socket.getOutputStream());
                 outputStream.writeUTF(messageOut);
                 messageIn = inputStream.readUTF();
                 }catch (Exception e1) {
                     e1.printStackTrace();
-
-                if(messageIn.equals("Accept")){
+                //sendDataToServer(ownerID, vehicleInfo, residencyTime);
+            }
+            if(messageIn.equals("Accept")){
                     JOptionPane.showMessageDialog(null, "Vehicle was saved");
                     ownerGUILogin.dispose();
                 }
                 else{
                     JOptionPane.showMessageDialog(null, "Vehicle was not saved");
                 }
-                //sendDataToServer(ownerID, vehicleInfo, residencyTime);
-            }
         }});
 
         ownerGUILogin.setLayout(null);
