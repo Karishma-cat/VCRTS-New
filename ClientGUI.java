@@ -113,7 +113,7 @@ public class ClientGUI extends LoginGUI {
             String deadline = jobDeadlineTextField.getText();
             int duration = Integer.parseInt(jobDurationTextField.getText());
             int completionTime = VC.calcCompTime(duration);
-            Job subJob = new Job(clientID.VC.getSize() + 1, duration, deadline, completionTime);
+            Job subJob = new Job(clientID,VC.getSize() + 1, duration, deadline, completionTime);
             if (!subJob.equals(subJob1)) {
                 subJob1 = subJob;
             }
