@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.Date;
 
 import javax.swing.BoxLayout;
@@ -27,15 +28,14 @@ import javax.swing.border.LineBorder;
 
 public class VC {
     static ServerSocket serverSocket;
-	static Socket socket;
-	static DataInputStream inputStream;
-	static DataOutputStream outputStream;
+    static Socket socket;
+    static DataInputStream inputStream;
+    static DataOutputStream outputStream;
     static Connection databaseConnection;
     static String url = "jdbc:mysql://localhost:3306/VC3?useTimezone=true&serverTimezone=UTC";
-	static String username = "root";
-	static String password = "Aniram9835";
+    static String username = "root";
+    static String password = "Aniram9835";
     static Date third1;
-
 
     private static void saveOwnerToDB(String ownerID, String vehicleInfo, String residencyTime) {
         try {
@@ -68,80 +68,56 @@ public class VC {
 
     public static void main(String[] args) {
         String messageIn= "";
-		String messageOut = "";
+        String messageOut = "";
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        try{
+        try {
             // creating the server
-			serverSocket = new ServerSocket(9808);
-        }catch (Exception e) {
-			e.printStackTrace();
-        }
+            serverSocket = new ServerSocket(9808);
+            databaseConnection = DriverManager.getConnection(url, username, password);
 
-        while(!messageIn.equals("end")) {
-            try {
-			// sever accepts connection request from client
-			socket = serverSocket.accept();
+            while (true) {
+                try {
+                    // sever accepts connection request from client
+                    socket = serverSocket.accept();
 
-			// server reads a message message from client
-			inputStream = new DataInputStream(socket.getInputStream());
+                    // server reads a message message from client
+                    inputStream = new DataInputStream(socket.getInputStream());
 
-			// server sends a message to client
-			outputStream = new DataOutputStream(socket.getOutputStream());
+                    // server sends a message to client
+                    outputStream = new DataOutputStream(socket.getOutputStream());
 
-            messageIn = inputStream.readUTF();
+                    messageIn = inputStream.readUTF();
 
-            String[] parts = messageIn.split(",");
-            String determine= parts[0];
-            String first = parts[1];
-            String second = parts[2];
-            String third = parts[3];
+                    String[] parts = messageIn.split(",");
+                    String determine= parts[0];
+                    String first = parts[1];
+                    String second = parts[2];
+                    String third = parts[3];
 
-			JFrame serverChoice = new JFrame("Server choice");
-		        serverChoice.setSize(300, 450);
-		        
-		        JButton pass = new JButton("Accept request");
-		        pass.setBounds(20, 260, 250, 30);
-		        serverChoice.add(pass);
-		        
-		        JButton deny = new JButton("Reject request");
-		        deny.setBounds(20, 320, 250, 30);
-		        serverChoice.add(deny);
-		        
-		        pass.addActionListener(x -> {
                     try {
-                    third1=dateFormat.parse(third);
+                        third1 = dateFormat.parse(third);
                     } catch (ParseException e) {
-                    e.printStackTrace();
+                        e.printStackTrace();
                     }
-					try {
-                        if(determine.equals("job")){
-                            saveJobsToDB(first, second,third1);
-                        }
-                        else if(determine.equals("owner")){
-                            saveOwnerToDB(first, second, third);
-                        }
-						outputStream.writeUTF("Accept");
-					} catch (IOException e) {
-						e.printStackTrace();
-					};
-					serverChoice.dispose();
-		        });
-		        
-		        deny.addActionListener(x -> {
-					try {
-						outputStream.writeUTF("Deny");
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					serverChoice.dispose();
-		        });
 
-                serverChoice.setVisible(true);
-
-            }catch (Exception e) {
-                e.printStackTrace();
+                    if (determine.equals("job")) {
+                        Date completionTime = calculateCompletionTime(third1, second);
+                        System.out.println("Job Completion Time: " + completionTime);
+                    } else if (determine.equals("owner")) {
+                        saveOwnerToDB(first, second, third);
+                    }
+                    outputStream.writeUTF("Accept");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-            
+        } catch (IOException | SQLException e) {
+            e.printStackTrace();
         }
+    }
+
+    private static Date calculateCompletionTime(Date deadLine, String Duration) {
+        long duration_minutes = Long.parseLong(Duration) * 60 * 1000;
+        return new Date(deadLine.getTime() + duration_minutes);
     }
 }
