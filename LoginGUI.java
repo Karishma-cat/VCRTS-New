@@ -5,9 +5,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.net.Socket;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -24,7 +21,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 
 public class LoginGUI extends JFrame 
@@ -34,7 +30,7 @@ public class LoginGUI extends JFrame
     private ArrayList<RegisterAccountClick> userList = new ArrayList<>();
     private static final String DB_URL = "jdbc:mysql://localhost:3306/VC3";
     private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "Aniram9835";
+    private static final String DB_PASSWORD = "Database@1*";
 
     public static void main(String[] args) {
         new LoginGUI();

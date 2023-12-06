@@ -4,8 +4,10 @@
         "lib/**/*.jar",
         "mysql-connector-j-8.2.0.jar",
         "/Users/alexfox/Desktop/mysql-connector-j-8.2.0.jar",
-        "/Users/avery/Downloads/mysql-connector-java-8.0.19/mysql-connector-java-8.0.19.jar"
+        "/Users/avery/Downloads/mysql-connector-java-8.0.19/mysql-connector-java-8.0.19.jar",
+        "/Users/tiffanyhale/Downloads/mysql-connector-j-8.2.0.jar"
     ],
+
     "sqltools.connections": [
         {
             "mysqlOptions": {
@@ -21,5 +23,8 @@
             "username": "root",
             "password": "connect1"
         }
+    ],
+    "java.project.sourcePaths": [
+        ""
     ]
 }
