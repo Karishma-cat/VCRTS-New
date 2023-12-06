@@ -1,70 +1,37 @@
 public class Job {
-    private int jobId;
-    private Client requester;
-    private boolean completed;
+    private final int clientID;
+    private final int jobID;
     private final int duration;
     private final String deadline;
     private final int completionTime;
-   
 
-    public Job(int jobId, Client requester, boolean completed, int duration, String deadline, int completionTime) {
-        this.jobId = jobId;
-        this.requester = requester;
-        this.completed = completed;
+    public Job(int clientID, int jobID, int duration, String deadline, int completionTime) {
+        this.clientID = clientID;
+        this.jobID = jobID;
         this.duration = duration;
         this.deadline = deadline;
         this.completionTime = completionTime;
     }
 
-   
+    // Getters for your fields if needed
 
-    public Job(int clientID, int i, int duration2, String deadline2, int completionTime2) {
+    public int getClientID() {
+        return clientID;
     }
 
-
-
-    public int getJobId() {
-        return jobId;
+    public int getJobID() {
+        return jobID;
     }
 
     public int getDuration() {
-		return duration;
-	}
+        return duration;
+    }
 
     public String getDeadline() {
-		return this.deadline;
-	}
-
-    
-
-    public void setJobId(int jobId) {
-        this.jobId = jobId;
+        return deadline;
     }
 
-    public Client getRequester() {
-        return requester;
-    }
-
-    public void setRequester(Client requester) {
-        this.requester = requester;
-    }
-
-    public boolean isCompleted() {
-        return completed;
-    }
     public int getCompletionTime() {
-		return this.completionTime;
-	}
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
+        return completionTime;
     }
-
-    //Add functionality
-    public void start() {}
-
-    //Added functionality
-    //public void transferToServer(Server s) {}
-
-    
 }

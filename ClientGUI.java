@@ -106,13 +106,13 @@ public class ClientGUI extends LoginGUI {
             if (!subJob.equals(subJob1)) {
                 subJob1 = subJob;
             }
-            timeLine.setText("Calculated Time: " + subJob1.getCompletionTime());
+            System.out.println("Calculated Time: " + subJob1.getCompletionTime());
         });
 
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String clientid = jobIDTextField.getText();
+                String clientid = clientIdField.getText();
                 String duration = jobDurationTextField.getText();
                 DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
                 Date deadline = null;

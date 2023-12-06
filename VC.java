@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -29,7 +30,7 @@ public class VC {
     static Date third1;
     private static int compTime = 0;
     Client client;
-    static private ArrayList<Job> jobs;
+    private static List<Job> jobs = new ArrayList<>();
 
 
 
