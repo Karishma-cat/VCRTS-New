@@ -18,6 +18,11 @@ public class Job {
 
    
 
+    public Job(int clientID, int i, int duration2, String deadline2, int completionTime2) {
+    }
+
+
+
     public int getJobId() {
         return jobId;
     }
