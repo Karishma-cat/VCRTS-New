@@ -1,4 +1,5 @@
 public class Client {
+    public static final String VC = null;
     private int clientId;
     private String name;
 

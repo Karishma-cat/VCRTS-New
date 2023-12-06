@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.JButton;
@@ -26,6 +27,11 @@ public class VC {
     static String username = "root";
     static String password = "Database@1*";
     static Date third1;
+    private static int compTime = 0;
+    Client client;
+    static private ArrayList<Job> jobs;
+
+
 
     private static void saveOwnerToDB(String ownerID, String vehicleInfo, String residencyTime) {
         try {
@@ -39,6 +45,7 @@ public class VC {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        
     }
 
     private static void saveJobsToDB(String clientID, String duration, Date deadLine) {
@@ -135,5 +142,22 @@ public class VC {
     private static Date calculateCompletionTime(Date deadLine, String Duration) {
         long duration_minutes = Long.parseLong(Duration) * 60 * 1000;
         return new Date(deadLine.getTime() + duration_minutes);
+    }
+    public static int calcCompTime(int time) {
+        return compTime + time;
+     }
+     
+
+
+    public static int getSize() {
+        return jobs.size();
+    }
+    public VC(Client client) {
+        this.client = client;
+        jobs = new ArrayList<Job>();
+    }
+    static public void addJob(Job j) {
+        jobs.add(j);
+        compTime += j.getDuration();
     }
 }

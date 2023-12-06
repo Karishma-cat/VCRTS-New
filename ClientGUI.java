@@ -31,6 +31,7 @@ public class ClientGUI extends LoginGUI {
 	Socket socket;
 	DataInputStream inputStream;
 	DataOutputStream outputStream;
+    static Job subJob1;
 
     public void createClientGUI() {
         JFrame clientGUILogin = new JFrame("Client Panel");
@@ -86,6 +87,42 @@ public class ClientGUI extends LoginGUI {
 
         JButton submitButton = createStyledButton("Submit");
         submitButton.setBounds(150, 230, 100, 40);
+
+        JLabel timeLine = createStyledLabel("**Must calculate completion time before submitting**");
+        timeLine.setBounds(20, 140, 450, 200);
+        timeLine.setFont(new Font("Arial", Font.BOLD, 11));
+        timeLine.setForeground(new Color(128, 0, 32));
+        ClientJobFrame.add(timeLine);
+
+        JTextField clientIdField = new JTextField("");
+        clientIdField.setBounds(20, 60, 200, 30);
+        ClientJobFrame.add(clientIdField);
+
+        JButton calButton = createStyledButton("Calculate completion time");
+        calButton.setBounds(20, 260, 250, 30);
+        calButton.setPreferredSize(new Dimension(200, 40));
+        calButton.setFont(new Font("Arial", Font.BOLD, 14));
+        ClientJobFrame.add(calButton);
+
+        ClientJobFrame.add(submitButton);
+        ClientJobFrame.setLayout(null);
+        ClientJobFrame.setVisible(true);
+
+        calButton.addActionListener(event ->{
+            int clientID = Integer.parseInt(clientIdField.getText());
+            String deadline = jobDeadlineTextField.getText();
+            int duration = Integer.parseInt(jobDurationTextField.getText());
+            int completionTime = VC.calcCompTime(duration);
+            Job subJob = new Job(clientID.VC.getSize() + 1, duration, deadline, completionTime);
+            if (!subJob.equals(subJob1)) {
+                subJob1 = subJob;
+            }
+    		timeLine.setText("Calculated Time: " + subJob1.getCompletionTime());
+        });
+
+
+
+
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -117,18 +154,20 @@ public class ClientGUI extends LoginGUI {
                     e1.printStackTrace();
                 }
                 
-               // System.out.println("Client ID: " + clientid);
-                //System.out.println("Duration: " + duration + " minutes");
-                //System.out.println("Deadline: " + deadline);
+                System.out.println("Client ID: " + clientid);
+                System.out.println("Duration: " + duration + " minutes");
+                System.out.println("Deadline: " + deadline);
                 
-                //savetoDataBase(clientid,duration,deadline)                
+                savetoDataBase(clientid,duration,deadline);               
                 
             
         }});
         ClientJobFrame.add(submitButton);
 
         ClientJobFrame.setLayout(null);
-        ClientJobFrame.setVisible(true);
+        ClientJobFrame.setVisible(true); 
+    
+    
     }
 
     public static JButton createStyledButton(String text) {
