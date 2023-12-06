@@ -78,7 +78,6 @@ public class VC {
             socket = serverSocket.accept();
 
             while (!messageIn.equals("end")) {
-                try {
                     // sever accepts connection request from client
                     socket = serverSocket.accept();
 
@@ -96,7 +95,17 @@ public class VC {
                     String second = parts[2];
                     String third = parts[3];
 
-                    try {
+                    JFrame serverChoice = new JFrame("Server choice");
+                    serverChoice.setSize(300, 450);
+                    JButton pass = new JButton("Accept request");
+                    pass.setBounds(20, 260, 250, 30);
+                    serverChoice.add(pass);
+                    JButton deny = new JButton("Reject request");
+		            deny.setBounds(20, 320, 250, 30);
+                    serverChoice.add(deny);
+
+                    pass.addActionListener(x ->{
+                        try {
                         third1 = dateFormat.parse(third);
                     } catch (ParseException e) {
                         e.printStackTrace();
@@ -108,12 +117,25 @@ public class VC {
                     } else if (determine.equals("owner")) {
                         saveOwnerToDB(first, second, third);
                     }
+                    serverChoice.dispose();
+                    try{
                     outputStream.writeUTF("Accept");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (IOException | SQLException e) {
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    }
+                    });
+
+                    deny.addActionListener(x -> {
+                        try {
+                            outputStream.writeUTF("deny");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        serverChoice.dispose();
+                    
+                    });
+
+                }}catch (IOException | SQLException e) {
             e.printStackTrace();
         }
     }
