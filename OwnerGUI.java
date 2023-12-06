@@ -84,7 +84,7 @@ public class OwnerGUI extends LoginGUI {
                     messageIn = inputStream.readUTF();
                 } catch (Exception e1) {
                     e1.printStackTrace();
-                    // sendDataToServer(ownerID, vehicleInfo, residencyTime);
+                    sendDataToServer(ownerID, vehicleInfo, residencyTime);
                 }
                 if (messageIn.equals("Accept")) {
                     JOptionPane.showMessageDialog(null, "Vehicle was saved");

@@ -23,14 +23,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
-
 public class ClientGUI extends LoginGUI {
-    String messageOut="";
-    String messageIn="";
+    String messageOut = "";
+    String messageIn = "";
     ServerSocket serverSocket;
-	Socket socket;
-	DataInputStream inputStream;
-	DataOutputStream outputStream;
+    Socket socket;
+    DataInputStream inputStream;
+    DataOutputStream outputStream;
     static Job subJob1;
 
     public void createClientGUI() {
@@ -59,15 +58,11 @@ public class ClientGUI extends LoginGUI {
 
     public void ClientSubmitJobClick() {
         JFrame ClientJobFrame = new JFrame("Job Submission");
-        ClientJobFrame.setSize(400, 350);
+        ClientJobFrame.setSize(600, 350);
 
         JLabel jobID = createStyledLabel("Client ID:");
         jobID.setBounds(20, 20, 250, 30);
         ClientJobFrame.add(jobID);
-
-        JTextField jobIDTextField = new JTextField("");
-        jobIDTextField.setBounds(20, 50, 250, 30);
-        ClientJobFrame.add(jobIDTextField);
 
         JLabel jobDuration = createStyledLabel("Approximate duration of Task (in minutes):");
         jobDuration.setBounds(20, 90, 250, 30);
@@ -86,20 +81,14 @@ public class ClientGUI extends LoginGUI {
         ClientJobFrame.add(jobDeadlineTextField);
 
         JButton submitButton = createStyledButton("Submit");
-        submitButton.setBounds(150, 230, 100, 40);
-
-        JLabel timeLine = createStyledLabel("**Must calculate completion time before submitting**");
-        timeLine.setBounds(20, 140, 450, 200);
-        timeLine.setFont(new Font("Arial", Font.BOLD, 11));
-        timeLine.setForeground(new Color(128, 0, 32));
-        ClientJobFrame.add(timeLine);
+        submitButton.setBounds(20, 230, 100, 40);
 
         JTextField clientIdField = new JTextField("");
         clientIdField.setBounds(20, 60, 200, 30);
         ClientJobFrame.add(clientIdField);
 
         JButton calButton = createStyledButton("Calculate completion time");
-        calButton.setBounds(20, 260, 250, 30);
+        calButton.setBounds(20, 290, 250, 30);
         calButton.setPreferredSize(new Dimension(200, 40));
         calButton.setFont(new Font("Arial", Font.BOLD, 14));
         ClientJobFrame.add(calButton);
@@ -108,20 +97,17 @@ public class ClientGUI extends LoginGUI {
         ClientJobFrame.setLayout(null);
         ClientJobFrame.setVisible(true);
 
-        calButton.addActionListener(event ->{
+        calButton.addActionListener(event -> {
             int clientID = Integer.parseInt(clientIdField.getText());
             String deadline = jobDeadlineTextField.getText();
             int duration = Integer.parseInt(jobDurationTextField.getText());
             int completionTime = VC.calcCompTime(duration);
-            Job subJob = new Job(clientID,VC.getSize() + 1, duration, deadline, completionTime);
+            Job subJob = new Job(clientID, VC.getSize() + 1, duration, deadline, completionTime);
             if (!subJob.equals(subJob1)) {
                 subJob1 = subJob;
             }
-    		timeLine.setText("Calculated Time: " + subJob1.getCompletionTime());
+            timeLine.setText("Calculated Time: " + subJob1.getCompletionTime());
         });
-
-
-
 
         submitButton.addActionListener(new ActionListener() {
             @Override
@@ -133,41 +119,38 @@ public class ClientGUI extends LoginGUI {
                 try {
                     deadline = dateFormat.parse(jobDeadlineTextField.getText());
                 } catch (ParseException e1) {
-                    // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
-                messageOut="job"+","+clientid+","+duration+","+deadline;
-                try{
-                socket = new Socket("localhost", 9808);
-                inputStream = new DataInputStream(socket.getInputStream());
-    			outputStream = new DataOutputStream(socket.getOutputStream());
-                outputStream.writeUTF(messageOut);
-                messageIn = inputStream.readUTF();
-                if(messageIn.equals("Accept")){
-                    JOptionPane.showMessageDialog(null, "Job has been submitted");
-                    ClientJobFrame.dispose();
-                }
-                else{
-                    JOptionPane.showMessageDialog(null, "Job was not submitted");
-                }
-                }catch (Exception e1) {
+                messageOut = "job" + "," + clientid + "," + duration + "," + deadline;
+                try {
+                    socket = new Socket("localhost", 9808);
+                    inputStream = new DataInputStream(socket.getInputStream());
+                    outputStream = new DataOutputStream(socket.getOutputStream());
+                    outputStream.writeUTF(messageOut);
+                    messageIn = inputStream.readUTF();
+                    if (messageIn.equals("Accept")) {
+                        JOptionPane.showMessageDialog(null, "Job has been submitted");
+                        ClientJobFrame.dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Job was not submitted");
+                    }
+                } catch (Exception e1) {
                     e1.printStackTrace();
                 }
-                
+
                 System.out.println("Client ID: " + clientid);
                 System.out.println("Duration: " + duration + " minutes");
                 System.out.println("Deadline: " + deadline);
-                
-                savetoDataBase(clientid,duration,deadline);               
-                
-            
-        }});
+
+                savetoDataBase(clientid, duration, deadline);
+
+            }
+        });
         ClientJobFrame.add(submitButton);
 
         ClientJobFrame.setLayout(null);
-        ClientJobFrame.setVisible(true); 
-    
-    
+        ClientJobFrame.setVisible(true);
+
     }
 
     public static JButton createStyledButton(String text) {
@@ -194,37 +177,34 @@ public class ClientGUI extends LoginGUI {
         label.setForeground(new Color(128, 0, 32));
         return label;
     }
-    
-    private void savetoDataBase(String clientid, String duration, Date deadline){
+
+    private void savetoDataBase(String clientid, String duration, Date deadline) {
         String url = "jdbc:mysql://localhost:3306/VC3";
         String user = "root";
-        String pass =  "Aniram9835";
-java.sql.Date sqlDate = new java.sql.Date(deadline.getTime());
+        String pass = "Aniram9835";
+        java.sql.Date sqlDate = new java.sql.Date(deadline.getTime());
 
-        try (Connection connection = DriverManager.getConnection(url, user, pass)){
+        try (Connection connection = DriverManager.getConnection(url, user, pass)) {
             String sql = "INSERT INTO clientSubmissions(client_ID, duration_minutes, submission_date) VALUES (?, ?, ?)";
-            try( PreparedStatement statement = connection.prepareStatement(sql)){
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, clientid);
                 statement.setString(2, duration);
                 statement.setDate(3, sqlDate);
 
-                
                 int rowsAffected = statement.executeUpdate();
 
-                if(rowsAffected > 0) {
+                if (rowsAffected > 0) {
                     System.out.println("Data has been saved");
-                    
+
                 } else {
                     System.out.println("Data failed to save");
                 }
-                
-                    
-                
+
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
     }
-    
+
 }
