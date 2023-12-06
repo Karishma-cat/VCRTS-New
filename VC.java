@@ -139,10 +139,10 @@ public class VC {
         }
     }
 
-    private static Date calculateCompletionTime(Date deadLine, String Duration) {
-        long duration_minutes = Long.parseLong(Duration) * 60 * 1000;
-        return new Date(deadLine.getTime() + duration_minutes);
-    }
+  //  private static Date calculateCompletionTime(Date deadLine, String Duration) {
+     //   long duration_minutes = Long.parseLong(Duration) * 60 * 1000;
+      //  return new Date(deadLine.getTime() + duration_minutes);
+  //  } 
     public static int calcCompTime(int time) {
         return compTime + time;
      }
