@@ -58,7 +58,7 @@ public class ClientGUI extends LoginGUI {
 
     public void ClientSubmitJobClick() {
         JFrame ClientJobFrame = new JFrame("Job Submission");
-        ClientJobFrame.setSize(600, 350);
+        ClientJobFrame.setSize(400, 550);
 
         JLabel jobID = createStyledLabel("Client ID:");
         jobID.setBounds(20, 20, 250, 30);
@@ -106,8 +106,13 @@ public class ClientGUI extends LoginGUI {
             if (!subJob.equals(subJob1)) {
                 subJob1 = subJob;
             }
+            
+            JLabel CompTime = createStyledLabel("Calculated Time: " + subJob1.getCompletionTime());
+            CompTime.setBounds(20, 310, 350, 30);
+            ClientJobFrame.add(CompTime); 
+            
             System.out.println("Calculated Time: " + subJob1.getCompletionTime());
-        });
+        });        
 
         submitButton.addActionListener(new ActionListener() {
             @Override
